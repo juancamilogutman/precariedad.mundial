@@ -14,7 +14,7 @@ st.set_page_config(page_title="Precariedad Mundial",
 page_selection = option_menu(
             None,  # No menu title
             ["Distribucion empleo", "Tasas de precariedad","Salarios"],  
-            icons=["arrow-down-circle","arrow-up-circle", "arrow-up-circle"],   
+            icons=["pie-chart","bar-chart-steps", "arrow-up-circle"],   
             menu_icon="cast",  
             default_index=0, 
             orientation="horizontal")

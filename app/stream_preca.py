@@ -3,12 +3,11 @@ import pandas as pd
 
 def fetch_data_preca():
     df = pd.read_csv('app/data/precariedad_categoria.csv')
-    #dframe = pd.read_csv('data/precariedad_categoria.csv')    
+    #df = pd.read_csv('data/precariedad_categoria.csv')    
     return df
 
 def show_page_preca():
     dframe = fetch_data_preca()
-    dframe.head()
     unique_categorias = list(set(dframe.variable_interes))
     variables_preca = ['tasa_part', 'tasa_seg', 'tasa_reg', 'tasa_temp']
     st.title(f"Prueba para aplicacion de precariedad mundial")
@@ -24,7 +23,7 @@ def show_page_preca():
         "categoria": df_filtrado["categoria"],
         }
         )
-    st.bar_chart(chart_data, x="pais", y="particip_empleo", color="categoria",stack=False)
+    st.bar_chart(chart_data, x="pais", y="tasa", color="categoria",stack=False)
 
 if __name__ == "__main__":
     while True:
