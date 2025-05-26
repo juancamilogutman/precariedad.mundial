@@ -2,7 +2,7 @@ import streamlit as st
 import pandas as pd
 
 def fetch_data_distrib():
-    df = pd.read_csv('data/pesos_categoria.csv')
+    df = pd.read_csv('app/data/pesos_categoria.csv')
     return df
 
 def show_page_distrib():
@@ -21,6 +21,6 @@ def show_page_distrib():
         )
     st.bar_chart(chart_data, x="pais", y="particip_empleo", color="categoria")
 
-#if __name__ == "__main__":
-#    while True:
-#        show_page_distrib()
+if __name__ == "__main__":
+    while True:
+        show_page_distrib()
