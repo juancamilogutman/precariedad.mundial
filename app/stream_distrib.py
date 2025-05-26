@@ -6,11 +6,11 @@ def fetch_data_distrib():
     return df
 
 def show_page_distrib():
-    df = fetch_data_distrib()
-    unique_categorias = list(set(df.variable_interes))
+    dframe = fetch_data_distrib()
+    unique_categorias = list(set(dframe.variable_interes))
     st.title(f"Prueba para aplicacion de precariedad mundial")
     categoria = st.radio("Elegí una categoria", unique_categorias)
-    df_filtrado = df[df.variable_interes == categoria]
+    df_filtrado = dframe[dframe.variable_interes == categoria]
     st.write(f"Distribucion del empleo según la variable: {categoria}")
     chart_data = pd.DataFrame(
         {
