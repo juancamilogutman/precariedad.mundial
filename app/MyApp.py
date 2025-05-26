@@ -9,7 +9,7 @@ st.title(f"Prueba para aplicacion de precariedad mundial",)
 categoria = st.radio("Elegí una categoria", unique_categorias)
 df_filtrado = df[df.variable_interes == categoria]
 
-st.write(f"Distribucion del empleo según la variable: {categoria}")
+st.write(f"Distribucion del empleo según la variable : {categoria}")
 chart_data = pd.DataFrame(
     {
         "pais": df_filtrado["PAIS"],
