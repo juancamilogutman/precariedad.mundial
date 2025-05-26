@@ -2,7 +2,7 @@ import streamlit as st
 import pandas as pd
 
 def fetch_data_distrib():
-    df = pd.read_csv("pesos_categoria.csv")
+    df = pd.read_csv("/pesos_categoria.csv")
     return df
 
 def show_page_distrib():
