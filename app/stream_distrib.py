@@ -16,7 +16,7 @@ def show_page_distrib():
     with col1:
         categoria = st.radio("Elegí una categoria", unique_categorias)
     with col2:
-        categorias2 = st.radio("Graficar con dos categorias", unique_categorias, value=None)
+        categorias2 = st.radio("Graficar con dos categorias", unique_categorias,index = None)
     if categorias2 == None:
         df_filtrado = dframe[dframe.variable_interes == categoria]
     else: 
