@@ -3,14 +3,24 @@ import pandas as pd
 
 def fetch_data_distrib():
     df = pd.read_csv('app/data/pesos_categoria.csv')
-    return df
+    df2 = pd.read_csv('app/data/pesos_categorias2.csv')
+
+    return df, df2
 
 def show_page_distrib():
-    dframe = fetch_data_distrib()
+    dframe,dframe2 = fetch_data_distrib()
     unique_categorias = list(set(dframe.variable_interes))
+    unique_categorias2 = list(set(dframe2.variable_interes))   
     st.title(f"Prueba para aplicacion de precariedad mundial")
-    categoria = st.radio("Elegí una categoria", unique_categorias)
-    df_filtrado = dframe[dframe.variable_interes == categoria]
+    col1, col2 = st.columns(2)
+    with col1:
+        categoria = st.radio("Elegí una categoria", unique_categorias)
+    with col2:
+        categorias2 = st.radio("Graficar con dos categorias", unique_categorias2,index=None)
+    if categorias2 == None:
+        df_filtrado = dframe[dframe.variable_interes == categoria]
+    else: 
+        df_filtrado = dframe2[dframe2.variable_interes == categorias2]
     st.write(f"Distribucion del empleo según la variable: {categoria}")
     chart_data = pd.DataFrame(
         {
