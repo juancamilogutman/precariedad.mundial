@@ -17,11 +17,11 @@ def show_page_distrib():
         categoria = st.radio("Elegí una categoria", unique_categorias)
     with col2:
         categorias2 = st.radio("Graficar con dos categorias", unique_categorias2, value=None)
-    if categorias2 == None:
-        df_filtrado = dframe[dframe.variable_interes == categoria]
-    else: 
-        combined = f"{categoria}-{categorias2}"
-        df_filtrado = dframe2[dframe2.variable_interes == combined]
+        if categorias2 == None:
+            df_filtrado = dframe[dframe.variable_interes == categoria]
+        else: 
+            combined = f"{categoria}-{categorias2}"
+            df_filtrado = dframe2[dframe2.variable_interes == combined]
     st.write(f"Distribucion del empleo según la variable: {categoria}")
     chart_data = pd.DataFrame(
         {
