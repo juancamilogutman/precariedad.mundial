@@ -11,9 +11,11 @@ def show_page_preca():
     unique_categorias = list(set(dframe.variable_interes))
     variables_preca = ['tasa_part', 'tasa_seg', 'tasa_reg', 'tasa_temp']
     st.title(f"Prueba para aplicacion de precariedad mundial")
-    categoria = st.radio("Elegí una categoria", unique_categorias)
-    preca = st.radio("Elegí una variable de precariedad", variables_preca)
-
+    col1, col2 = st.columns(2)
+    with col1:
+        categoria = st.radio("Elegí una categoria", unique_categorias)
+    with col2:
+        preca = st.radio("Elegí una variable de precariedad", variables_preca)
     df_filtrado = dframe[dframe.variable_interes == categoria]
     st.write(f"Distribucion del empleo según la variable: {categoria}")
     chart_data = pd.DataFrame(
