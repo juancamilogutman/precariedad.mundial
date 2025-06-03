@@ -3,7 +3,9 @@ import pandas as pd
 
 def fetch_data_distrib():
     df = pd.read_csv('app/data/pesos_categoria.csv')
+    df['categoria'] = pd.Categorical(df['categoria'], categories=pd.unique(df['categoria']), ordered=True)
     df2 = pd.read_csv('app/data/pesos_categorias2.csv')
+    df2['categoria'] = pd.Categorical(df2['categoria'], categories=pd.unique(df2['categoria']), ordered=True)
 
     return df, df2
 
@@ -12,17 +14,23 @@ def show_page_distrib():
     unique_categorias = list(set(dframe.variable_interes))
     #unique_categorias2 = list(set(dframe2.variable_interes))   
     st.title(f"Prueba para aplicacion de precariedad mundial")
-    col1, col2 = st.columns(2)
+    col1, col2 , col3 = st.columns(3)
     with col1:
         categoria = st.radio("Elegí una categoria", unique_categorias)
     with col2:
-        categorias2 = st.radio("Graficar con dos categorias", unique_categorias,index = None)
-    if categorias2 == None:
-        df_filtrado = dframe[dframe.variable_interes == categoria]
-    else: 
-        combined = f"{categoria}-{categorias2}"
-        df_filtrado = dframe2[dframe2.variable_interes == combined]
-    st.write(f"Distribucion del empleo según la variable: {categoria}")
+        eleccion = st.radio("Desagregar por una segunda variable?", ("No", "Si"))
+    with col3:
+        if eleccion == "No":
+                    df_filtrado = dframe[dframe.variable_interes == categoria]
+        else:
+            categorias2 = st.radio("Elegir segunda categoria", unique_categorias,index = 1)
+            combined = f"{categoria}-{categorias2}"
+            combined_reverse = f"{categorias2}-{categoria}"
+            df_filtrado = dframe2[dframe2.variable_interes.isin([combined, combined_reverse])]
+    if eleccion == "No":
+         st.write(f"Distribucion del empleo según la variable: {categoria}")
+    else:
+         st.write(f"Distribucion del empleo según las variables: {categoria} y {categorias2}")
     chart_data = pd.DataFrame(
         {
         "pais": df_filtrado["PAIS"],
