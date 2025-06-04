@@ -10,7 +10,8 @@ proporciones_empleo <- data.frame()
 for (variable in vector_categoricas) {
   
   peso_categoria <- base %>% 
-    filter(!is.na(.data[[variable]])) %>% 
+    filter(!is.na(.data[[variable]]),
+           .data[[variable]] != "Ns/Nc") %>% 
     group_by(PAIS,categoria = .data[[variable]]) %>% 
     summarise(casos_pond = sum(WEIGHT,na.rm = T)) %>% 
     mutate(variable_interes = variable) %>% 
@@ -19,6 +20,16 @@ for (variable in vector_categoricas) {
   
   proporciones_empleo <- bind_rows(proporciones_empleo,peso_categoria) 
 }
+niveles <- c("Mujer","Varon","Priv","Pub","SD","Resto",
+             "Primaria","Secundaria","Terciaria",
+             "Pequeño","Mediano","Grande",
+             "Baja","Media","Alta")
+
+proporciones_empleo <- proporciones_empleo %>% 
+  mutate(categoria = factor(categoria,
+                               levels = niveles,
+                               )) %>% 
+  arrange(PAIS,categoria)
 write_csv(proporciones_empleo,"app/data/pesos_categoria.csv")
 
 combinations <- combn(vector_categoricas, 2, simplify = FALSE)
@@ -30,18 +41,24 @@ for (combo in combinations) {
   variable2 <- combo[2]
   
   peso_categoria <- base %>%
-    filter(!is.na(.data[[variable1]]) & !is.na(.data[[variable2]])) %>% 
+    filter(!is.na(.data[[variable1]]) , !is.na(.data[[variable2]]),
+           .data[[variable1]] != "Ns/Nc",.data[[variable2]] != "Ns/Nc") %>% 
     group_by(PAIS, categoria1 = .data[[variable1]], categoria2 = .data[[variable2]]) %>% 
     summarise(casos_pond = sum(WEIGHT, na.rm = TRUE)) %>% 
     mutate(variable_interes = paste(variable1, variable2, sep = "-")) %>% 
     group_by(PAIS) %>% 
-    mutate(particip_ocup = casos_pond / sum(casos_pond))
+    mutate(particip.ocup = casos_pond / sum(casos_pond))
   
   # Bind the results to the main data frame
   proporciones_empleo_2 <- bind_rows(proporciones_empleo_2, peso_categoria)
 }
 proporciones_empleo_2<- proporciones_empleo_2 %>% 
+  mutate(categoria1 = factor(categoria1,levels = niveles),
+         categoria2 = factor(categoria2,levels = niveles)
+  ) %>% 
+  arrange(PAIS,categoria1,categoria2) %>% 
   mutate(categoria = paste(categoria1, categoria2, sep = "-")) 
+
 write_csv(proporciones_empleo_2,"app/data/pesos_categorias2.csv")
 
 #Tasas precariedad ####
@@ -79,3 +96,5 @@ for (variable in vector_categoricas) {
 
 precariedad_categorias <- bind_rows(precariedad_categorias,precariedad)
 write_csv(precariedad_categorias,"app/data/precariedad_categoria.csv")
+
+#Salarios ####
