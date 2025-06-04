@@ -21,7 +21,7 @@ def show_page_distrib():
         eleccion = st.radio("Desagregar por una segunda variable?", ("No", "Si"))
     with col3:
         if eleccion == "No":
-                    df_filtrado = dframe[dframe.variable_interes == categoria]
+            df_filtrado = dframe[dframe.variable_interes == categoria]
         else:
             categorias2 = st.radio("Elegir segunda categoria", unique_categorias,index = 1)
             combined = f"{categoria}-{categorias2}"
@@ -31,6 +31,11 @@ def show_page_distrib():
          st.write(f"Distribucion del empleo según la variable: {categoria}")
     else:
          st.write(f"Distribucion del empleo según las variables: {categoria} y {categorias2}")
+    # st.bar_chart(
+    #     df_filtrado[["PAIS", "particip.ocup", "categoria"]],
+    #     x="PAIS",
+    #     y="particip.ocup",
+    #     color="categoria")
     chart_data = pd.DataFrame(
         {
         "pais": df_filtrado["PAIS"],
@@ -38,6 +43,14 @@ def show_page_distrib():
         "categoria": df_filtrado["categoria"],
         }
         )
+    
+    desired_order = dframe['categoria'].cat.categories
+
+    chart_data["categoria"] = pd.Categorical(
+        chart_data["categoria"],
+        categories=desired_order,
+        ordered=True)
+    chart_data = chart_data.sort_values("categoria")
     st.bar_chart(chart_data, x="pais", y="particip_empleo", color="categoria")
 
 if __name__ == "__main__":
