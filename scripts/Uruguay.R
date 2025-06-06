@@ -20,14 +20,14 @@ Base <- URU %>%
     ),
     EDAD = e27,
     EDUC = case_when(
-      e49 == 2 ~ "Primaria",
-      e197_1 == 1 ~ "Primaria", 
-      e201_1 == 1 ~ "Secundaria", 
       e212_1 == 1 ~ "Terciaria", 
       e215_1 == 1 ~ "Terciaria", 
       e218_1 == 1 ~ "Terciaria", 
       e221_1 == 1 ~ "Terciaria", 
-      e224_1 == 1 ~ "Terciaria"
+      e224_1 == 1 ~ "Terciaria", 
+      e201_1 == 1 ~ "Secundaria",
+      e49 == 2 ~ "Primaria",
+      e197_1 == 1 ~ "Primaria",
     ),
     CATOCUP = case_when(
       f71_2 == "9111" ~ "Asalariados",
