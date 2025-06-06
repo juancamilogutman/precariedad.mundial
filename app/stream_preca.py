@@ -34,20 +34,17 @@ def show_page_preca():
     with st.expander("📖 Conocé las dimensiones de la precariedad laboral", expanded=False):
         st.markdown("""
         **🕒 Trabajo part-time involuntario (PRECAPT):**  
-        Mide la proporción de trabajadores que desean trabajar más horas pero no pueden hacerlo, 
-        reflejando subempleo horario y limitaciones en el acceso a empleos de tiempo completo.
+        Mide la proporción de trabajadores que desean trabajar más horas pero no pueden hacerlo
         
         **🏛️ No registro de la relación laboral (PRECAREG):**  
         Indica el porcentaje de trabajadores asalariados cuya relación laboral no está registrada 
-        formalmente, lo que implica falta de protección legal y derechos laborales básicos.
+        formalmente
         
         **⏰ Trabajo temporario (PRECATEMP):**  
-        Representa la proporción de empleos con contratos de duración determinada o sin contrato, 
-        caracterizados por mayor inestabilidad e incertidumbre laboral.
+        Representa la proporción de empleos con contratos de duración determinada
         
         **🛡️ Falta de aportes a la seguridad social (PRECASEG):**  
-        Mide el porcentaje de trabajadores que no reciben aportes a sistemas de seguridad social, 
-        quedando desprotegidos ante riesgos de salud, vejez y desempleo.
+        Mide el porcentaje de trabajadores que no reciben aportes a sistemas de seguridad social
         """)
     
     col1, col2 = st.columns(2)

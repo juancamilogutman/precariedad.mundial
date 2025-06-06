@@ -20,13 +20,12 @@ def show_page_distrib():
     # Sidebar for filters
     with st.sidebar:
         st.header("Filtros")
-        paises_seleccionados = st.multiselect("Seleccionar países", unique_paises, default=unique_paises)
         categoria = st.radio("Elegí una categoria", unique_categorias)
         eleccion = st.radio("Desagregar por una segunda variable?", ("No", "Si"))
         
         if eleccion == "Si":
             categorias2 = st.radio("Elegir segunda categoria", unique_categorias, index=1)
-    
+        paises_seleccionados = st.multiselect("Seleccionar países", unique_paises, default=unique_paises)
     # Data filtering logic
     if eleccion == "No":
         df_filtrado = dframe[(dframe.variable_interes == categoria) & (dframe.PAIS.isin(paises_seleccionados))]
