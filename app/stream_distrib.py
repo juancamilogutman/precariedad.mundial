@@ -25,7 +25,20 @@ def show_page_distrib():
         
         if eleccion == "Si":
             categorias2 = st.radio("Elegir segunda categoria", unique_categorias, index=1)
-        paises_seleccionados = st.multiselect("Seleccionar países", unique_paises, default=unique_paises)
+        
+        # Button to select all countries
+        if st.button("Seleccionar todos los países"):
+            st.session_state.paises_seleccionados = unique_paises
+        
+        paises_seleccionados = st.multiselect(
+            "Seleccionar países", 
+            unique_paises, 
+            default=st.session_state.get('paises_seleccionados', unique_paises)
+        )
+        
+        # Update session state
+        st.session_state.paises_seleccionados = paises_seleccionados
+        
     # Data filtering logic
     if eleccion == "No":
         df_filtrado = dframe[(dframe.variable_interes == categoria) & (dframe.PAIS.isin(paises_seleccionados))]
