@@ -15,7 +15,7 @@ def show_page_distrib():
     unique_categorias = list(set(dframe.variable_interes))
     unique_paises = sorted(list(set(dframe.PAIS)))
     
-    st.title(f"Prueba para aplicacion de precariedad mundial")
+    st.title(f"Distribución del Empleo según Categorías")
     
     # Sidebar for filters
     with st.sidebar:
