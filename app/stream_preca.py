@@ -33,8 +33,12 @@ def show_page_preca():
         st.markdown(
             """
             <style>
+            [data-testid="stImage"] {
+            display: flex;
+            justify-content: flex-end;
+            }
             img {
-                opacity: 0.7 !important;
+            opacity: 0.7 !important;
             }
             </style>
             """,
