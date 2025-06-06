@@ -10,6 +10,7 @@ def fetch_data_preca():
 def show_page_preca():
     dframe = fetch_data_preca()
     unique_categorias = list(set(dframe.variable_interes))
+    unique_paises = sorted(list(set(dframe.PAIS)))
     
     # Variables de precariedad con nombres descriptivos
     variables_preca_dict = {
@@ -64,8 +65,21 @@ def show_page_preca():
         preca_key = st.radio("📈 Elegí una variable de precariedad", 
                             list(variables_preca_dict.keys()),
                             format_func=lambda x: variables_preca_dict[x])
+        
+        # Button to select all countries
+        if st.button("Seleccionar todos los países"):
+            st.session_state.paises_seleccionados_preca = unique_paises
+        
+        paises_seleccionados = st.multiselect(
+            "Seleccionar países", 
+            unique_paises, 
+            default=st.session_state.get('paises_seleccionados_preca', unique_paises)
+        )
+        
+        # Update session state
+        st.session_state.paises_seleccionados_preca = paises_seleccionados
     
-    df_filtrado = dframe[dframe.variable_interes == categoria]
+    df_filtrado = dframe[(dframe.variable_interes == categoria) & (dframe.PAIS.isin(paises_seleccionados))]
     st.markdown(f"### Distribución del empleo según: **{categoria}**")
     st.markdown(f"*Variable analizada: {variables_preca_dict[preca_key]}*")
     
