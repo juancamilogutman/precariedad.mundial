@@ -1,5 +1,6 @@
 import streamlit as st
 import pandas as pd
+from PIL import Image
 
 def fetch_data_preca():
     df = pd.read_csv('app/data/precariedad_categoria.csv')
@@ -27,6 +28,18 @@ def show_page_preca():
         laboral a nivel mundial utilizando microdatos de encuestas de hogares oficiales.
         """)
     with col0b:
+        logo = Image.open("app/static/logo_ceped.png")
+        st.image(logo, width=120, output_format="PNG", channels="RGBA", caption="CEPED", use_column_width=False)
+        st.markdown(
+            """
+            <style>
+            img {
+                opacity: 0.7 !important;
+            }
+            </style>
+            """,
+            unsafe_allow_html=True,
+        )
         st.markdown("### 🔍 Variables de Precariedad Laboral")
         with st.expander("📖 Estas son las dimensiones de la precariedad laboral que analizamos", expanded=False):
             st.markdown("""
