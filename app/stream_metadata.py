@@ -82,7 +82,7 @@ def show_dictionary_section(diccionario):
         st.metric("Registros Mostrados", len(df_filtrado))
     
     # Variable categories explanation
-    with st.expander("📝 Categorías de Variables", expanded=False):
+    with st.expander("📝 Categorías de las Variables", expanded=False):
         st.markdown("""
         **Variables Demográficas:**
         - **PAIS**: País de la encuesta
