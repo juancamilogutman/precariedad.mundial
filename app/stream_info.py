@@ -249,14 +249,12 @@ def show_publications():
     ### 1. La calidad del empleo en la Argentina reciente
     **Autores:** J. Graña, G. Weksler, F. Lastra  
     **Revista:** Trabajo y Sociedad 38, 423-446  
-    **Enfoque:** Análisis de la relación entre calidad del empleo, calificación y tamaño de unidades productivas
     """)
     
     st.markdown("""
     ### 2. Calidad del empleo y estructura del mercado de trabajo en América Latina
     **Autores:** S. Fernández-Franco, J.M. Graña, F. Lastra, G. Weksler  
     **Revista:** Ensayos de Economía 32 (61), 124-151  
-    **Enfoque:** Perspectiva comparada de la estructura del mercado laboral latinoamericano
     """)
     
     # Data access
