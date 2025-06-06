@@ -17,21 +17,18 @@ def show_page_preca():
         'tasa_reg': 'No registro de la relación laboral',
         'tasa_temp': 'Trabajo temporario'
     }
-    
-    st.title("📊 Precariedad Laboral Mundial")
-    st.markdown("### Análisis comparativo de las condiciones de empleo en el mundo")
-    
-    # Introducción del proyecto
-    st.markdown("""
-    Esta aplicación presenta datos del proyecto **Precariedad Mundial** del Centro de Estudios sobre 
-    Población, Empleo y Desarrollo (CEPED - IIEP – UBA), que analiza la incidencia de la precariedad 
-    laboral a nivel mundial utilizando microdatos de encuestas de hogares oficiales.
-    """)
-    
-    # Explicación de las variables de precariedad
-    st.markdown("### 🔍 Variables de Precariedad Laboral")
-    
-    with st.expander("📖 Conocé las dimensiones de la precariedad laboral", expanded=False):
+    col0a, col0b = st.columns([6,2])
+    with col0a:
+        st.title("📊 Precariedad Laboral Mundial")
+        st.markdown("### Análisis comparativo de las condiciones de empleo en el mundo")
+        st.markdown("""
+        Esta aplicación presenta datos del proyecto **Precariedad Mundial** del Centro de Estudios sobre 
+        Población, Empleo y Desarrollo (CEPED - IIEP – UBA), que analiza la incidencia de la precariedad 
+        laboral a nivel mundial utilizando microdatos de encuestas de hogares oficiales.
+        """)
+    with col0b:
+        st.markdown("### 🔍 Variables de Precariedad Laboral")
+        with st.expander("📖 Estaso son las dimensiones de la precariedad laboral que analizamos", expanded=False):
         st.markdown("""
         **🕒 Trabajo part-time involuntario (PRECAPT):**  
         Mide la proporción de trabajadores que desean trabajar más horas pero no pueden hacerlo
@@ -47,10 +44,10 @@ def show_page_preca():
         Mide el porcentaje de trabajadores que no reciben aportes a sistemas de seguridad social
         """)
     
-    col1, col2 = st.columns(2)
-    with col1:
+    # Sidebar for filters
+    with st.sidebar:
+        st.header("Filtros")
         categoria = st.radio("🎯 Elegí una categoría", unique_categorias)
-    with col2:
         preca_key = st.radio("📈 Elegí una variable de precariedad", 
                             list(variables_preca_dict.keys()),
                             format_func=lambda x: variables_preca_dict[x])
