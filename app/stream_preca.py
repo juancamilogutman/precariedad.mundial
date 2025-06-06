@@ -28,7 +28,7 @@ def show_page_preca():
         laboral a nivel mundial utilizando microdatos de encuestas de hogares oficiales.
         """)
     with col0b:
-        logo = Image.open("app/static/logo_ceped.png")
+        logo = Image.open("app/logo_ceped.png")
         st.image(logo, width=120, output_format="PNG", channels="RGBA", caption="CEPED", use_column_width=False)
         st.markdown(
             """
