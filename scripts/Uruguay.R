@@ -49,9 +49,9 @@ Base <- URU %>%
     ),
     PRECATEMP = NA,                  
     PRECASEG = case_when( 
-      f82 == 2 & CATOCUP == "Asalariados" ~ 1,       
-      f82 == 1 & CATOCUP == "Asalariados" ~ 0,   
-      f263 == 2 & CATOCUP == "Cuenta propia" ~ 1,    
+      f82 == 2 & CATOCUP == "Asalariados" ~ 1,
+      f82 == 1 & CATOCUP == "Asalariados" ~ 0,
+      f263 == 2 & CATOCUP == "Cuenta propia" ~ 1,
       f263 == 1 & CATOCUP == "Cuenta propia" ~ 0
     ),  
     PRECAREG = NA,

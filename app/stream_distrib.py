@@ -13,12 +13,14 @@ def fetch_data_distrib():
 def show_page_distrib():
     dframe,dframe2 = fetch_data_distrib()
     unique_categorias = list(set(dframe.variable_interes))
+    unique_paises = sorted(list(set(dframe.PAIS)))
     
     st.title(f"Prueba para aplicacion de precariedad mundial")
     
     # Sidebar for filters
     with st.sidebar:
         st.header("Filtros")
+        paises_seleccionados = st.multiselect("Seleccionar países", unique_paises, default=unique_paises)
         categoria = st.radio("Elegí una categoria", unique_categorias)
         eleccion = st.radio("Desagregar por una segunda variable?", ("No", "Si"))
         
@@ -27,12 +29,12 @@ def show_page_distrib():
     
     # Data filtering logic
     if eleccion == "No":
-        df_filtrado = dframe[dframe.variable_interes == categoria]
+        df_filtrado = dframe[(dframe.variable_interes == categoria) & (dframe.PAIS.isin(paises_seleccionados))]
         st.write(f"Distribucion del empleo según la variable: {categoria}")
     else:
         combined = f"{categoria}-{categorias2}"
         combined_reverse = f"{categorias2}-{categoria}"
-        df_filtrado = dframe2[dframe2.variable_interes.isin([combined, combined_reverse])]
+        df_filtrado = dframe2[(dframe2.variable_interes.isin([combined, combined_reverse])) & (dframe2.PAIS.isin(paises_seleccionados))]
         st.write(f"Distribucion del empleo según las variables: {categoria} y {categorias2}")
     
     chart_data = pd.DataFrame(
