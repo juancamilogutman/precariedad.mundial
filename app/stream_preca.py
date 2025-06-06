@@ -29,7 +29,7 @@ def show_page_preca():
         """)
     with col0b:
         logo = Image.open("app/logo_ceped.png")
-        st.image(logo, width=120, output_format="PNG", channels="RGBA", caption="CEPED", use_column_width=False)
+        st.image(logo, width=120, output_format="PNG", channels="RGBA",  use_container_width=False)
         st.markdown(
             """
             <style>
