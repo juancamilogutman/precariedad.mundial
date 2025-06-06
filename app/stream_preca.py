@@ -28,21 +28,21 @@ def show_page_preca():
         """)
     with col0b:
         st.markdown("### 🔍 Variables de Precariedad Laboral")
-        with st.expander("📖 Estaso son las dimensiones de la precariedad laboral que analizamos", expanded=False):
-        st.markdown("""
-        **🕒 Trabajo part-time involuntario (PRECAPT):**  
-        Mide la proporción de trabajadores que desean trabajar más horas pero no pueden hacerlo
-        
-        **🏛️ No registro de la relación laboral (PRECAREG):**  
-        Indica el porcentaje de trabajadores asalariados cuya relación laboral no está registrada 
-        formalmente
-        
-        **⏰ Trabajo temporario (PRECATEMP):**  
-        Representa la proporción de empleos con contratos de duración determinada
-        
-        **🛡️ Falta de aportes a la seguridad social (PRECASEG):**  
-        Mide el porcentaje de trabajadores que no reciben aportes a sistemas de seguridad social
-        """)
+        with st.expander("📖 Estas son las dimensiones de la precariedad laboral que analizamos", expanded=False):
+            st.markdown("""
+            **🕒 Trabajo part-time involuntario (PRECAPT):**  
+            Mide la proporción de trabajadores que desean trabajar más horas pero no pueden hacerlo
+            
+            **🏛️ No registro de la relación laboral (PRECAREG):**  
+            Indica el porcentaje de trabajadores asalariados cuya relación laboral no está registrada 
+            formalmente
+            
+            **⏰ Trabajo temporario (PRECATEMP):**  
+            Representa la proporción de empleos con contratos de duración determinada
+            
+            **🛡️ Falta de aportes a la seguridad social (PRECASEG):**  
+            Mide el porcentaje de trabajadores que no reciben aportes a sistemas de seguridad social
+            """)
     
     # Sidebar for filters
     with st.sidebar:
