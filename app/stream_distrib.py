@@ -13,25 +13,27 @@ def fetch_data_distrib():
 def show_page_distrib():
     dframe,dframe2 = fetch_data_distrib()
     unique_categorias = list(set(dframe.variable_interes))
-    #unique_categorias2 = list(set(dframe2.variable_interes))   
+    
     st.title(f"Prueba para aplicacion de precariedad mundial")
-    col1, col2 , col3 = st.columns(3)
-    with col1:
+    
+    # Sidebar for filters
+    with st.sidebar:
+        st.header("Filtros")
         categoria = st.radio("Elegí una categoria", unique_categorias)
-    with col2:
         eleccion = st.radio("Desagregar por una segunda variable?", ("No", "Si"))
-    with col3:
-        if eleccion == "No":
-            df_filtrado = dframe[dframe.variable_interes == categoria]
-        else:
-            categorias2 = st.radio("Elegir segunda categoria", unique_categorias,index = 1)
-            combined = f"{categoria}-{categorias2}"
-            combined_reverse = f"{categorias2}-{categoria}"
-            df_filtrado = dframe2[dframe2.variable_interes.isin([combined, combined_reverse])]
+        
+        if eleccion == "Si":
+            categorias2 = st.radio("Elegir segunda categoria", unique_categorias, index=1)
+    
+    # Data filtering logic
     if eleccion == "No":
-         st.write(f"Distribucion del empleo según la variable: {categoria}")
+        df_filtrado = dframe[dframe.variable_interes == categoria]
+        st.write(f"Distribucion del empleo según la variable: {categoria}")
     else:
-         st.write(f"Distribucion del empleo según las variables: {categoria} y {categorias2}")
+        combined = f"{categoria}-{categorias2}"
+        combined_reverse = f"{categorias2}-{categoria}"
+        df_filtrado = dframe2[dframe2.variable_interes.isin([combined, combined_reverse])]
+        st.write(f"Distribucion del empleo según las variables: {categoria} y {categorias2}")
     
     chart_data = pd.DataFrame(
         {
@@ -48,14 +50,8 @@ def show_page_distrib():
         ordered=True
         )
     chart_data = chart_data.sort_values("categoria")
-#    st.bar_chart(chart_data, x="pais", y="particip_empleo", color="categoria")
-# paleta de colores
-# color_palette = alt.Scale(
-#     domain=list(desired_order),
-#     range=["#1f77b4", "#ff7f0e", "#2ca02c", "#d62728", "#9467bd", "#8c564b"]  # ajusta según tus categorías
-# )
 
-# Crea el gráfico Altair
+    # Chart creation
     reversed_order = list(desired_order)[::-1]
 
     bar_chart = alt.Chart(chart_data).mark_bar().encode(
