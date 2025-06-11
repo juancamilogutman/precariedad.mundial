@@ -204,7 +204,7 @@ def show_homogenization_section(homogeneizacion):
         st.subheader("📋 Mapeo de Variables por País")
         
         # Show a clean view of the homogenization process
-        columns_to_show = ['Pais', 'Encuesta', 'Variable dataframe', 'Etiqueta', 'Reclasificación']
+        columns_to_show = ['Pais', 'Encuesta','Variable original','Etiqueta', 'Variable dataframe','Reclasificación']
         df_display = df_homog_filtrado[columns_to_show].copy()
         
         st.dataframe(
@@ -212,10 +212,11 @@ def show_homogenization_section(homogeneizacion):
             use_container_width=True,
             column_config={
                 "Pais": st.column_config.TextColumn("País", width="small"),
-                "Encuesta": st.column_config.TextColumn("Encuesta", width="medium"),
-                "Variable dataframe": st.column_config.TextColumn("Variable", width="small"),
+                "Encuesta": st.column_config.TextColumn("Encuesta", width="small"),
+                "Variable original": st.column_config.TextColumn("Variable Original", width="small"),
                 "Etiqueta": st.column_config.TextColumn("Categoría Original", width="large"),
-                "Reclasificación": st.column_config.TextColumn("Reclasificación", width="medium")
+                "Variable dataframe": st.column_config.TextColumn("Variable", width="small"),
+                "Reclasificación": st.column_config.TextColumn("Reclasificación", width="small")
             },
             hide_index=True
         )
