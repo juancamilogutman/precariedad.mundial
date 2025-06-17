@@ -2,18 +2,30 @@
 library(eph)
 library(tidyverse)
 library(openxlsx)
+library(occupationcross)
 
-  
+#Diccionario paises migra####
+diccionario_paises <- data.frame(
+  ARGENTINA = 200, BOLIVIA = 202,BRASIL = 203, COLOMBIA = 205, CHILE = 208, 
+  PARAGUAY = 221, PERU = 222, URUGUAY = 225,
+  VENEZUELA = 226,ESPAÑA = 410, ITALIA = 417, CHINA = 310,`ESTADOS UNIDOS` = 212) %>% 
+  pivot_longer(1:ncol(.),names_to = "pais",values_to = "CH15_COD") %>% 
+  mutate(pais = str_to_title(pais),
+         iso_pais = c("ARG","BOL","BRA","COL","CHL",
+                      "PRY","PER","URY","VEN",
+                      "ESP","ITA","CHN","USA"))
+
 ####bases de datos#####
 ####ARGENTINA#####
 Base_ARG0814 <- readRDS("../bases/Argentina/EPH2008_2014.RDS")  
 Base_ARG1719 <- readRDS("../bases/Argentina/EPH2016_2019.RDS")  
-load("Fuentes Complementarias/crosstable_cno2001_isco08.rda")  
-
+#load("Fuentes Complementarias/crosstable_cno2001_isco08.rda")  
+#devtools::install_github("Guidowe/occupationcross")
+crosstable_cno2001_isco08<- occupationcross::crosstable_cno2001_isco08
 
 ####ARG Variables####
 Variables1719  <- c("CODUSU","NRO_HOGAR","COMPONENTE","ANO4","TRIMESTRE" ,"AGLOMERADO","H15",
-    "CH04", "CH06","CH08","CH12","CH13","CH14","CH15","ESTADO","CAT_OCUP","INTENSI",
+    "CH04", "CH06","CH08","CH12","CH13","CH14","CH15","CH16","CH15_COD","ESTADO","CAT_OCUP","INTENSI",
     "PP04A", "PP04B_COD","PP07H","P21","PONDERA","PP04D_COD","PP04C",
     "PP07A","PP07C","PP05B2_ANO","PP04B3_ANO","PP07E","NIVEL_ED","PONDIIO","DECOCUR",
     "PP11D_COD","PP04C","PP04C99","PP03G","PP3E_TOT")
@@ -42,7 +54,19 @@ rm(list = c("Base_ARG1719","Base_ARG0814"))
 gc()
 
 #####Calificaciones##########
-bases_bind <- bases_bind %>% 
+bases_indiv <- eph::get_microdata(year = c(2019),period = 1:4,vars = Variables1719)
+bases_indiv_24 <- eph::get_microdata(year = c(2024),period = 1:4,vars = Variables1719)
+
+bases<- bind_rows(bases_indiv_24,
+                  bases_indiv %>% select(all_of(Variables1719)))%>% 
+  mutate(PP04B_COD = as.character(PP04B_COD), 
+         PP04B_COD = dplyr::case_when(
+           nchar(PP04B_COD) == 1 ~ paste0("0", PP04B_COD),
+           nchar(PP04B_COD) == 2 ~ PP04B_COD, 
+           nchar(PP04B_COD) == 3 ~ paste0("0", PP04B_COD),
+           nchar(PP04B_COD) == 4 ~ PP04B_COD))
+
+bases_bind <- bases %>% 
   filter(ESTADO == 1) %>% #Ocupados - Asal o TCP
 #  filter(CAT_OCUP %in% 2:3) %>% #Ocupados - Asal o TCP
   mutate(PP04D_COD = stringr::str_pad(PP04D_COD, 5, side = "left",pad = "0"),
@@ -94,12 +118,21 @@ bases_bind <- bases_bind %>%
 correccion<- bases_bind %>%
   group_by(ANO4,grupos.calif,grupos.calif.isco) %>% 
   summarise(Casos = n())
-
+ver<- bases %>% 
+  group_by(CH15,CH15_COD) %>% 
+  summarise(n())
 #### Base Homog #####
-base_homog <- bases_bind %>%
-  filter(ANO4 == 2019) %>% 
-  mutate(
-    PAIS = "Argentina",
+base_homog <- bases %>%
+  filter(ANO4 %in%  c(2019,2024)) %>% 
+  left_join(crosstable_cno2001_isco08 %>% rename(PP04D_COD = cno.2001.code)) %>% 
+  left_join(diccionario_paises) %>% 
+  mutate(PAIS = "Argentina",
+    MIGRA_INT = case_when(CH15 %in% 4:5~ "Si",
+                                  TRUE ~ "No"),
+    MIGRA_RECIENTE  = case_when(CH15 %in% 4:5 & CH16 %in% 4:5~ "Si",
+                                       TRUE ~ "No"),
+    MIGRA_ORIGEN = case_when(MIGRA_INT == "Si" & is.na(iso_pais)~ "RWD",
+                             MIGRA_INT == "Si" & (!is.na(iso_pais))~ iso_pais),
     ANO = ANO4,
     SEXO = case_when(CH04 == 1 ~ "Varon",
                      CH04 == 2 ~ "Mujer"),
@@ -115,6 +148,13 @@ base_homog <- bases_bind %>%
                 PP04C %in% 9:12 |(PP04C %in% 99 & PP04C99 == 3)~ "Grande"),
     TAMA = case_when(CAT_OCUP == 2 ~ "Pequeño",
                                TRUE ~ TAMA),
+    isco.1.digit = str_sub(isco08.2.digit.code,1,1),
+    grupos.calif.isco = factor(
+      case_when(
+        isco.1.digit %in% 1:3 ~ "Alta",
+        isco.1.digit %in% 4:8 ~ "Media",
+        isco.1.digit %in% 9 ~ "Baja"),
+      levels = c("Baja","Media","Alta")),
     CALIF = grupos.calif.isco,
     PRECAREG = case_when(PP07H == 1 ~ 0,
                          PP07H == 2 ~ 1),
@@ -144,11 +184,12 @@ base_homog <- bases_bind %>%
 
 variables<- c("PAIS","ANO","PERIODO","WEIGHT","SEXO","EDAD",
               "CATOCUP","COND","SECTOR","PRECAPT","EDUC",
+              "MIGRA_INT","MIGRA_RECIENTE","MIGRA_ORIGEN",
               "PRECAREG","PRECATEMP","PRECASALUD","PRECASEG","TAMA","CALIF","ING","WEIGHT_W") 
 base_homog_final <- base_homog %>% 
   select(all_of(variables))
 
-saveRDS(base_homog_final,file = "bases_homog/argentina.rds")
+saveRDS(base_homog_final,file = "bases_homog/argentina_2019_2024.rds")
 
 ####ARG categorias####
 Base_EPH.cat <- bases_bind %>%
