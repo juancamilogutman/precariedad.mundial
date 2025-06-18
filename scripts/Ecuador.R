@@ -1,6 +1,16 @@
 library(tidyverse)
 library(foreign)
 library(stringr)
+# Diccionario paises ####
+diccionario_paises <- data.frame(
+  p15aa = as.double(c("32","68","76","170","152",
+            "600","604","858","862",
+            "724","380","156","840")),
+  iso_pais = c("ARG","BOL","BRA","COL","CHL",
+                      "PRY","PER","URY","VEN",
+                      "ESP","ITA","CHN","USA"))
+
+
 #############Lectura y pool de bases#########
 # archivos<- list.files("../bases/Ecuador/")
 # 
@@ -27,8 +37,40 @@ library(stringr)
 # 
 # }
 
-#saveRDS(ecuador2019,"Bases/ecuador_2019.RDS")
-ecuador2019 <- readRDS("Bases/ecuador_2019.RDS")
+# 2024####
+#############Lectura y pool de bases#########
+base_spss<- read.spss(file = paste0('../bases/Ecuador/',"enemdu_persona_2024_lll_trimestre.sav"),
+          reencode = "UTF-8",use.value.labels = T,
+          to.data.frame = T) 
+          #
+
+archivos<- list.files("../bases/Ecuador/")
+ 
+rutas <- data.frame(
+  ruta = list.files("../bases/Ecuador/",recursive = T))
+
+
+rutas.base.2024 <- rutas %>%
+   filter(str_detect(ruta,pattern = "trimestre\\.csv"))
+ 
+ecuador2024 <- data.frame()
+
+for(base in rutas.base.2024$ruta[1:4]){
+
+
+ecuador<- read_delim(
+  file = paste0('../bases/Ecuador/',base),delim = ";")%>%
+  mutate(ciudad = as.character(ciudad),
+         area = as.character(area),
+         mes = as.character(mes),
+         dominio = as.character(dominio))
+
+ecuador2024 <-   bind_rows(ecuador2024,ecuador)
+
+
+}
+#saveRDS(ecuador2024,"Bases/ecuador_2024.RDS")
+#ecuador2024 <- readRDS("Bases/ecuador_2024.RDS")
 ####Ecuador####
 ##Miro variables##
 # prueba.salario <- ecuador %>%
@@ -117,13 +159,89 @@ base_homog <- ecuador2019 %>%
     PERIODO = periodo,
     ) 
 
+table(ecuador2024$p15aa)
+table(ecuador2024$p15ab)
+table(base_spss$p15aa)
+
+base_homog_24 <- ecuador2024 %>% 
+  left_join(diccionario_paises) %>% 
+  mutate(uno = 1) %>% 
+  filter(area == 1) %>% #Urbanos
+  filter(condact %in% 2:7) %>% #Ocupados
+  # filter(p42 %in% c(2,3,4,6)) %>% # CP, y asalariados privados (incluye jornalero y terciarizado)
+  #   filter(p42 == 2) %>% # Asalariad
+  mutate(
+    PAIS = "Ecuador",
+    MIGRA_INT = case_when(p15aa == 3 ~ "Si",
+                          TRUE ~ "No"),
+    MIGRA_RECIENTE  = NA,
+    MIGRA_ORIGEN = case_when(MIGRA_INT == "Si" & is.na(iso_pais)~ "RWD",
+                             MIGRA_INT == "Si" & (!is.na(iso_pais))~ iso_pais),
+    COND = "Ocupado",
+    ANO = as.integer(str_sub(periodo,1,4)),
+    SEXO = case_when(p02 == 1 ~ "Varon",
+                     p02 == 2 ~ "Mujer"),
+    EDAD = p03,
+    SECTOR = case_when(p42  == 1 ~"Pub",
+                       p42  %in%  c(2:6) ~"Priv",
+                       p42  == 10 ~"SD"),
+    CATOCUP = case_when(p42 %in% c(1,2,3,4,9,10) ~"Asalariados",
+                        p42 == 6 ~"Cuenta propia",
+                        p42 == 5 ~"Patron",
+                        TRUE ~"Resto"),
+    PRECASEG =  case_when(p44f == 1 ~ 0,# "Recibe seguo social",
+                          p44f == 2 ~ 1),
+    PRECAREG = NA,
+    PRECASALUD = NA,
+    registracion =  NA,
+    part.time.inv = case_when(p24 < 35 & p27%in% 1:3 ~ "Part Involunt",
+                              p24 < 35 & p27 %in% 4 ~ "Part Volunt",
+                              p24 >= 35 ~ "Full Time"), 
+    PRECAPT = case_when(part.time.inv == "Part Involunt"~1,
+                        part.time.inv %in%  c("Part Volunt","Full Time")~0),
+    PRECATEMP = NA,
+    # tiempo.determinado = case_when(
+    #   Estabili == 10 ~ "No",
+    #   Estabili != 10 ~ "Si"),
+    ISCO.1.digit = str_sub(p41,1,1), 
+    CALIF =   case_when(
+      ISCO.1.digit %in% 1:3 ~ "Alta",
+      ISCO.1.digit %in% 4:8 ~ "Media",
+      ISCO.1.digit %in% 9 ~ "Baja"),
+    TAMA =
+      case_when(
+        p47b %in% 1:9 ~ "Pequeño", # 1 a 9
+        p47b %in% 10:50 ~ "Mediano", # 10 a 50
+        p47b > 50 | p47a == 2 ~ "Grande"),#  + de  100
+    TAMA =case_when(
+      p42 == 6   ~ "Pequeño",
+      TRUE ~ TAMA),
+    ING = case_when(ingrl %in% c(0,999999) ~ NA,
+                    TRUE ~ ingrl),
+    EDUC = case_when(p10a %in% 1:5 ~ "Primaria",
+                     p10a %in% 6:7 ~ "Secundaria",
+                     p10a %in% 8:10 ~ "Terciaria"
+    ),
+  ) %>% 
+  rename(
+    WEIGHT = fexp,
+    PERIODO = periodo,
+  ) 
+
+
 variables<- c("PAIS","ANO","PERIODO","WEIGHT","SEXO","EDAD",
               "CATOCUP","COND","SECTOR","PRECAPT","EDUC",
+              "MIGRA_INT","MIGRA_RECIENTE","MIGRA_ORIGEN",
               "PRECAREG","PRECATEMP","PRECASALUD","PRECASEG","TAMA","CALIF","ING") 
+
+base_homog_24 <- base_homog_24 %>% 
+  select(all_of(variables))
+
 base_homog_final <- base_homog %>% 
   select(all_of(variables))
 
 saveRDS(base_homog_final,file = "bases_homog/ecuador.rds")
+saveRDS(base_homog_24,file = "bases_homog/ecuador_24.rds")
 ##Base Indicadores####
 ec.categ <- ecuador2019 %>% 
   mutate(uno = 1) %>% 
