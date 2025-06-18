@@ -44,34 +44,33 @@ base_spss<- read.spss(file = paste0('../bases/Ecuador/',"enemdu_persona_2024_lll
           to.data.frame = T) 
           #
 summary(base_spss$fexp)
-
-archivos<- list.files("../bases/Ecuador/")
+ruta <- "../precariedad-bases-scripts/bases/Ecuador/"
+archivos<- list.files(ruta)
  
-rutas <- data.frame(
-  ruta = list.files("../bases/Ecuador/",recursive = T))
+df.rutas <- data.frame(
+  ruta = list.files(ruta,recursive = T))
 
 
-rutas.base.2024 <- rutas %>%
+rutas.base.2024 <- df.rutas %>%
    filter(str_detect(ruta,pattern = "trimestre\\.csv"))
  
 ecuador2024 <- data.frame()
 # 
-# for(base in rutas.base.2024$ruta[1:4]){
-# 
-# 
-# ecuador<- read.table(
-#   file = paste0('../bases/Ecuador/',base),
-#   header = T,sep = ";",dec = ",")
-# ecuador<-ecuador %>%
-#   mutate(ciudad = as.character(ciudad),
-#          area = as.character(ecuador[,1]),
-#          mes = as.character(mes),
-#          dominio = as.character(dominio))
-# 
-# ecuador2024 <-   bind_rows(ecuador2024,ecuador)
-# 
-# 
-# }
+for(base in rutas.base.2024$ruta[1:4]){
+
+ecuador<- read.table(
+  file = paste0(ruta,base),
+  header = T,sep = ";",dec = ",")
+ecuador<-ecuador %>%
+  mutate(ciudad = as.character(ciudad),
+         area = as.character(ecuador[,1]),
+         mes = as.character(mes),
+         dominio = as.character(dominio))
+
+ecuador2024 <-   bind_rows(ecuador2024,ecuador)
+ 
+ 
+}
 # saveRDS(ecuador2024,"Bases/ecuador_2024.RDS")
 ecuador2024 <- readRDS("Bases/ecuador_2024.RDS")
 ####Ecuador####
@@ -101,6 +100,7 @@ ver <- ecuador2019 %>%
   summarise(casos = n())
 
 #Base homogenea ####
+#2019####
 table(ecuador2019$periodo)
 base_homog <- ecuador2019 %>% 
   mutate(uno = 1) %>% 
@@ -162,9 +162,19 @@ base_homog <- ecuador2019 %>%
     PERIODO = periodo,
     ) 
 
-table(ecuador2024$p15aa)
-table(ecuador2024$p15ab)
-table(base_spss$p15aa)
+variables<- c("PAIS","ANO","PERIODO","WEIGHT","SEXO","EDAD",
+              "CATOCUP","COND","SECTOR","PRECAPT","EDUC",
+              "MIGRA_INT","MIGRA_RECIENTE","MIGRA_ORIGEN",
+              "PRECAREG","PRECATEMP","PRECASALUD","PRECASEG","TAMA","CALIF","ING") 
+
+base_homog_final <- base_homog %>% 
+  select(all_of(variables))
+
+saveRDS(base_homog_final,file = "bases_homog/ecuador.rds")
+
+#2024####
+diccionario_paises <- diccionario_paises %>% mutate(
+  p15ab = as.integer(p15ab))
 
 base_homog_24 <- ecuador2024 %>% 
   left_join(diccionario_paises) %>% 
@@ -231,18 +241,10 @@ base_homog_24 <- ecuador2024 %>%
     PERIODO = periodo,
   ) 
 
-variables<- c("PAIS","ANO","PERIODO","WEIGHT","SEXO","EDAD",
-              "CATOCUP","COND","SECTOR","PRECAPT","EDUC",
-              "MIGRA_INT","MIGRA_RECIENTE","MIGRA_ORIGEN",
-              "PRECAREG","PRECATEMP","PRECASALUD","PRECASEG","TAMA","CALIF","ING") 
 
 base_homog_24 <- base_homog_24 %>% 
   select(all_of(variables))
 
-base_homog_final <- base_homog %>% 
-  select(all_of(variables))
-
-saveRDS(base_homog_final,file = "bases_homog/ecuador.rds")
 saveRDS(base_homog_24,file = "bases_homog/ecuador_24.rds")
 ##Base Indicadores####
 ec.categ <- ecuador2019 %>% 
