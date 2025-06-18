@@ -3,9 +3,9 @@ library(foreign)
 library(stringr)
 # Diccionario paises ####
 diccionario_paises <- data.frame(
-  p15aa = as.double(c("32","68","76","170","152",
+  p15ab = c("32","68","76","170","152",
             "600","604","858","862",
-            "724","380","156","840")),
+            "724","380","156","840"),
   iso_pais = c("ARG","BOL","BRA","COL","CHL",
                       "PRY","PER","URY","VEN",
                       "ESP","ITA","CHN","USA"))
@@ -55,22 +55,22 @@ rutas.base.2024 <- rutas %>%
  
 ecuador2024 <- data.frame()
 
-for(base in rutas.base.2024$ruta[1:4]){
-
-
-ecuador<- read_delim(
-  file = paste0('../bases/Ecuador/',base),delim = ";")%>%
-  mutate(ciudad = as.character(ciudad),
-         area = as.character(area),
-         mes = as.character(mes),
-         dominio = as.character(dominio))
-
-ecuador2024 <-   bind_rows(ecuador2024,ecuador)
-
-
-}
+# for(base in rutas.base.2024$ruta[1:4]){
+# 
+# 
+# ecuador<- read_delim(
+#   file = paste0('../bases/Ecuador/',base),delim = ";")%>%
+#   mutate(ciudad = as.character(ciudad),
+#          area = as.character(area),
+#          mes = as.character(mes),
+#          dominio = as.character(dominio))
+# 
+# ecuador2024 <-   bind_rows(ecuador2024,ecuador)
+# 
+# 
+# }
 #saveRDS(ecuador2024,"Bases/ecuador_2024.RDS")
-#ecuador2024 <- readRDS("Bases/ecuador_2024.RDS")
+ecuador2024 <- readRDS("Bases/ecuador_2024.RDS")
 ####Ecuador####
 ##Miro variables##
 # prueba.salario <- ecuador %>%
@@ -227,7 +227,9 @@ base_homog_24 <- ecuador2024 %>%
     WEIGHT = fexp,
     PERIODO = periodo,
   ) 
-
+ver <- base_homog_24 %>%
+  filter(MIGRA_INT == "Si") %>% 
+  select(p15aa,p15ab,MIGRA_INT,MIGRA_ORIGEN,iso_pais)
 
 variables<- c("PAIS","ANO","PERIODO","WEIGHT","SEXO","EDAD",
               "CATOCUP","COND","SECTOR","PRECAPT","EDUC",
