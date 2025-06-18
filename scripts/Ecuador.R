@@ -43,6 +43,7 @@ base_spss<- read.spss(file = paste0('../bases/Ecuador/',"enemdu_persona_2024_lll
           reencode = "UTF-8",use.value.labels = T,
           to.data.frame = T) 
           #
+summary(base_spss$fexp)
 
 archivos<- list.files("../bases/Ecuador/")
  
@@ -54,14 +55,16 @@ rutas.base.2024 <- rutas %>%
    filter(str_detect(ruta,pattern = "trimestre\\.csv"))
  
 ecuador2024 <- data.frame()
-
+# 
 # for(base in rutas.base.2024$ruta[1:4]){
 # 
 # 
-# ecuador<- read_delim(
-#   file = paste0('../bases/Ecuador/',base),delim = ";")%>%
+# ecuador<- read.table(
+#   file = paste0('../bases/Ecuador/',base),
+#   header = T,sep = ";",dec = ",")
+# ecuador<-ecuador %>%
 #   mutate(ciudad = as.character(ciudad),
-#          area = as.character(area),
+#          area = as.character(ecuador[,1]),
 #          mes = as.character(mes),
 #          dominio = as.character(dominio))
 # 
@@ -69,7 +72,7 @@ ecuador2024 <- data.frame()
 # 
 # 
 # }
-#saveRDS(ecuador2024,"Bases/ecuador_2024.RDS")
+# saveRDS(ecuador2024,"Bases/ecuador_2024.RDS")
 ecuador2024 <- readRDS("Bases/ecuador_2024.RDS")
 ####Ecuador####
 ##Miro variables##
@@ -227,9 +230,6 @@ base_homog_24 <- ecuador2024 %>%
     WEIGHT = fexp,
     PERIODO = periodo,
   ) 
-ver <- base_homog_24 %>%
-  filter(MIGRA_INT == "Si") %>% 
-  select(p15aa,p15ab,MIGRA_INT,MIGRA_ORIGEN,iso_pais)
 
 variables<- c("PAIS","ANO","PERIODO","WEIGHT","SEXO","EDAD",
               "CATOCUP","COND","SECTOR","PRECAPT","EDUC",
